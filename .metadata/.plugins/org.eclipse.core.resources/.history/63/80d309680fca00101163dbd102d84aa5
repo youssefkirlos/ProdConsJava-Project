@@ -1,0 +1,29 @@
+package prodcons.v7;
+
+public class TaskExecutor {
+	private final ProdConsBuffer buffer;
+	private final int bufSz;
+
+    public TaskExecutor(int bufSz) {
+    	this.bufSz = bufSz;
+        this.buffer = new ProdConsBuffer(bufSz);
+    }
+    
+    public void executeTask(Runnable task) throws InterruptedException {
+
+        Task tsk = new Task(Thread.currentThread().getId(),0,task);
+
+        buffer.put(tsk);
+
+        // UN NOUVEAU THREAD PAR TÂCHE
+        Thread t = new Thread(() -> {
+            try {
+                TaskMessage m = buffer.get();
+                m.run();
+            } catch (InterruptedException ignored) {}
+        });
+
+        t.start();
+    }
+
+}

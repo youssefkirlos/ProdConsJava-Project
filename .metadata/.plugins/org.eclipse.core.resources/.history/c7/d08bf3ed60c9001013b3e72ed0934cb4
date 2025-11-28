@@ -1,0 +1,39 @@
+package prodcons.v6;
+
+public class Consumer extends Thread {
+	
+	private final IProdConsBuffer buffer;
+    private final int consTime;
+    private static int totmsgC = 0;
+
+    public Consumer(IProdConsBuffer buffer, int consTime) {
+        this.buffer = buffer;
+        this.consTime = consTime;
+    }
+    
+
+    @Override
+    public void run() {
+        try {
+            while (true) {
+
+                // Objectif 6 
+                Message m = buffer.get();
+                System.out.println("get)");
+                totmsgC++;
+
+                System.out.println("Consumer " + getId() +
+                        " consumed message (prod=" + m.getProducerId() +
+                        ", id=" + m.getId() +
+                        ", remaining=" + m.remaining + ")");
+
+                sleep(consTime);
+            }
+        } catch (InterruptedException e) {
+        }
+    }
+    
+    public static int getTotmsgC() {
+    	return totmsgC ;
+    }
+}

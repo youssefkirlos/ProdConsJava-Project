@@ -1,0 +1,100 @@
+package prodcons.v6;
+
+public class ProdConsBuffer implements IProdConsBuffer {
+
+    private final Message[] buffer;
+    private final int bufSz;
+
+    private int in = 0;
+    private int out = 0;
+    private int nfull = 0;
+    private int totmsg = 0;
+
+    public ProdConsBuffer(int bufSz, int nProd) {
+        this.bufSz = bufSz;
+        this.buffer = new Message[bufSz];
+    }
+
+    @Override
+    public void put(Message m, int n) throws InterruptedException {
+        m.setN(n);
+        m.setRemaining(n);
+
+        // 1) Dépôt dans buffer
+        synchronized (this) {
+            while (nfull == bufSz)
+                wait();
+
+            buffer[in] = m;
+            in = (in + 1) % bufSz;
+            nfull++;
+            totmsg++;
+
+            notifyAll();
+        }
+
+        // 2) Producteur attend que remaining == 0
+        synchronized (m.sync_monitor) {
+            while (m.remaining > 0)
+                m.sync_monitor.wait();
+        }
+    }
+
+    @Override
+    public Message get() throws InterruptedException {
+        Message m;
+
+        // 1) Retirer un message du buffer
+        synchronized (this) {
+            while (nfull == 0)
+                wait();
+
+            m = buffer[out];
+            out = (out + 1) % bufSz;
+            nfull--;
+
+            notifyAll();
+        }
+
+        boolean lastCopy = false;
+
+        // 2) Consommation synchrone
+        synchronized (m.sync_monitor) {
+            m.remaining--;
+            lastCopy = (m.remaining == 0);
+
+            if (lastCopy) {
+                m.sync_monitor.notifyAll();
+            } else {
+                // attendre la fin globale
+                m.sync_monitor.wait();
+            }
+        }
+
+        // 3) RESTER DES COPIES ? => RÉINSÉRER DANS LE BUFFER
+        if (!lastCopy) {
+            synchronized (this) {
+                while (nfull == bufSz)
+                    wait();
+
+                buffer[in] = m;
+                in = (in + 1) % bufSz;
+                nfull++;
+
+                notifyAll();
+            }
+        }
+
+        return m;
+    }
+
+    @Override
+    public synchronized int nmsg() {
+        return nfull;
+    }
+
+    @Override
+    public synchronized int totmsg() {
+        return totmsg;
+    }
+}

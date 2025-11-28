@@ -1,0 +1,11 @@
+package prodcons.v7;
+
+public class Message implements Runnable{
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

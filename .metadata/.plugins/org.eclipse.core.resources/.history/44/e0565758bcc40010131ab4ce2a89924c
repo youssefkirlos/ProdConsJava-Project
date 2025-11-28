@@ -1,0 +1,89 @@
+package prodcons.v1;
+
+public class ProdConsBuffer implements IProdConsBuffer {
+
+    private final Message[] buffer;
+    private final int bufSz;
+
+    private int in = 0;
+    private int out = 0;
+    private int nfull = 0;
+    private int totmsg = 0;
+    private int arrivalCounter = 0;
+    private int producersAlive;
+  
+
+    public ProdConsBuffer(int bufSz,int nProd) {
+        this.bufSz = bufSz;
+        this.buffer = new Message[bufSz];
+        this.producersAlive = nProd;
+    }
+	
+	
+
+    @Override
+    public synchronized void put(Message m) throws InterruptedException {
+
+        // Garde 
+        while (nfull == bufSz) {
+        	System.out.println("TEST : Producer " + m.getProducerId() + " IS WAITING (buffer full)");
+            wait();
+        }
+
+        
+        
+        // PRE-ACTION 
+        m.setArrivalOrder(arrivalCounter++);
+        buffer[in] = m;
+        in = (in + 1) % bufSz;
+
+        // POST-ACTION
+        nfull++;
+        totmsg++;
+
+        notifyAll();
+        
+        //Thread.sleep(1000);
+    }
+
+    @Override
+    public synchronized Message get() throws InterruptedException {
+
+        // Garde 
+        while (nfull == 0) {
+            wait();
+        }
+
+        // PRE-ACTION
+  
+        
+        Message m = buffer[out];
+        out = (out + 1) % bufSz;
+
+        // POST-ACTION
+        nfull--;
+
+        notifyAll();
+        
+        //Thread.sleep(1000);
+
+        return m;
+    }
+    
+    
+    @Override
+    public synchronized int nmsg() {
+        return nfull;
+    }
+
+    @Override
+    public synchronized int totmsg() {
+        return totmsg;
+    }
+    
+    // Objectif 2 (Terminaison)
+    public synchronized void producerDone() {
+        producersAlive--;
+        notifyAll();  
+    }
+}

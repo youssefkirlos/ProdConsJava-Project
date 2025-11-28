@@ -1,0 +1,63 @@
+package prodcons.v6;
+
+
+public class ProdConsBuffer implements IProdConsBuffer {
+	private final Message[] buffer;
+    private final int bufSz;
+
+    private int in = 0;
+    private int out = 0;
+    private int nfull = 0;
+    private int totmsg = 0;
+    private int arrivalCounter = 0;
+  
+
+    public ProdConsBuffer(int bufSz,int nProd) {
+        this.bufSz = bufSz;
+        this.buffer = new Message[bufSz];
+
+    }
+
+	@Override
+	public void put(Message m, int n) throws InterruptedException {
+	    m.setN(n);
+	    m.setRemaining(n);
+
+	    synchronized(this) {
+	        while (nfull == bufSz) {
+	            wait();
+	        }
+
+	        buffer[in] = m;
+	        in = (in + 1) % bufSz;
+	        nfull++;
+	        notifyAll();
+	    }
+
+	    // ATTENTE SYNCHRONE : le producteur attend la fin des consommations
+	    synchronized(m.monitor) {
+	        while (m.remaining > 0)
+	            m.monitor.wait();    // se débloque quand remaining==0
+	    }
+	}
+
+
+	@Override
+	public Message get() throws InterruptedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int nmsg() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int totmsg() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

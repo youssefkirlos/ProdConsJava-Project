@@ -1,0 +1,110 @@
+package prodcons.v6;
+
+
+public class ProdConsBuffer implements IProdConsBuffer {
+	private final Message[] buffer;
+    private final int bufSz;
+
+    private int in = 0;
+    private int out = 0;
+    private int nfull = 0;
+    private int totmsg = 0;
+    private int arrivalCounter = 0;
+  
+
+    public ProdConsBuffer(int bufSz,int nProd) {
+        this.bufSz = bufSz;
+        this.buffer = new Message[bufSz];
+
+    }
+
+	@Override
+	public void put(Message m, int n) throws InterruptedException {
+	    m.setN(n);
+	    m.setRemaining(n);
+
+	    synchronized(this) {
+	        while (nfull == bufSz) {
+	            wait();
+	        }
+
+	        buffer[in] = m;
+	        in = (in + 1) % bufSz;
+	        
+	        nfull++;
+	        totmsg++;
+	        
+	        notifyAll();
+	    }
+
+	    
+	    synchronized(m.sync_monitor) {
+	        while (m.remaining > 0) {
+	            m.sync_monitor.wait();  
+	        }
+	    }
+	}
+
+
+	@Override
+	public Message get() throws InterruptedException {
+	    Message m;
+
+	    // 1) On retire un message du buffer
+	    synchronized (this) {
+	        while (nfull == 0) {
+	            wait();
+	        }
+
+	        m = buffer[out];
+	        out = (out + 1) % bufSz;
+	        nfull--;
+	        notifyAll();
+	    }
+
+	    boolean lastCopy;
+
+	    // 2) On consomme une copie
+	    synchronized (m.sync_monitor) {
+	        m.remaining--;
+
+	        lastCopy = (m.remaining == 0);
+
+	        if (lastCopy) {
+	            m.sync_monitor.notifyAll();
+	        } else {
+	            // On attend la fin de la synchronisation
+	            m.sync_monitor.wait();
+	        }
+	    }
+
+	    // 3) IMPORTANT : si ce n'était pas la dernière copie, on remet le message dans le buffer !
+	    if (!lastCopy) {
+	        synchronized (this) {
+	            while (nfull == bufSz) {
+	                wait();
+	            }
+
+	            buffer[in] = m;
+	            in = (in + 1) % bufSz;
+	            nfull++;
+	            notifyAll();
+	        }
+	    }
+
+	    return m;
+	}
+
+
+
+	@Override
+    public synchronized int nmsg() {
+        return nfull;
+    }
+
+    @Override
+    public synchronized int totmsg() {
+        return totmsg;
+    }
+
+}

@@ -1,0 +1,57 @@
+package prodcons.v1;
+
+import java.util.ArrayList;
+import java.util.Properties;
+
+public class TestProdCons {
+
+    public static void main(String[] args) throws Exception {
+
+    	Properties properties = new Properties();
+    	properties.loadFromXML(TestProdCons.class.getResourceAsStream("options.xml"));
+
+        int nProd = Integer.parseInt(properties.getProperty("nProd"));
+        int nCons = Integer.parseInt(properties.getProperty("nCons"));
+        int bufSz = Integer.parseInt(properties.getProperty("bufSz"));
+        int prodTime = Integer.parseInt(properties.getProperty("prodTime"));
+        int consTime = Integer.parseInt(properties.getProperty("consTime"));
+        int minProd = Integer.parseInt(properties.getProperty("minProd"));
+        int maxProd = Integer.parseInt(properties.getProperty("maxProd"));
+
+        IProdConsBuffer buffer = new ProdConsBuffer(bufSz);
+
+        /*
+        // producers
+        for (int i = 0; i < nProd; i++) {
+            new Producer(buffer, minProd, maxProd, prodTime).start();
+        }
+
+        // consumers
+        for (int i = 0; i < nCons; i++) {
+            new Consumer(buffer, consTime).start();
+        }
+        */
+        
+        
+        ArrayList<Thread> threads = new ArrayList<>();
+
+     // créer producteurs
+     for (int i = 0; i < nProd; i++) {
+         threads.add(new Producer(buffer, minProd, maxProd, prodTime));
+     }
+
+     // créer consommateurs
+     for (int i = 0; i < nCons; i++) {
+         threads.add(new Consumer(buffer, consTime));
+     }
+
+     // mélanger aléatoirement
+     java.util.Collections.shuffle(threads);
+
+     // démarrer dans l’ordre mélangé
+     for (Thread t : threads) {
+         t.start();
+   // petite pause pour bien mélanger le scheduling
+     }
+    }
+}

@@ -1,0 +1,8 @@
+package prodcons.v7;
+
+
+public class Consumer extends Thread{
+	private final IProdConsBuffer buffer;
+    private final int consTime;
+
+}

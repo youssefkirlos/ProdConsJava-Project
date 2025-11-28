@@ -1,0 +1,46 @@
+package prodcons.v4;
+
+public class Message {
+	
+	
+    private final long producerId;
+    private final String msg ;
+    private final int msg_id;
+    private int arrivalOrder = -1;
+    
+    private final long timestamp = System.nanoTime();
+
+    public Message(long producerId, String msg, int msg_id) {
+        this.producerId = producerId;
+		this.msg = msg;
+        this.msg_id = msg_id;
+    }
+    
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public long getProducerId() {
+        return producerId;
+    }
+
+    public int getId() {
+        return msg_id;
+    }
+    
+    public void setArrivalOrder(int n) {
+        this.arrivalOrder = n;
+    }
+
+    public int getArrivalOrder() {
+        return arrivalOrder;
+    }
+
+
+    public String toString() {
+        return "Msg{prod=" + producerId + ", id=" + msg_id + ", order=" + arrivalOrder + "}";
+    }
+
+ 
+}

@@ -1,0 +1,42 @@
+package prodcons.v3;
+
+public class Consumer extends Thread {
+	
+	private final IProdConsBuffer buffer;
+    private final int consTime;
+    private static int totmsgC = 0;
+    long now = System.nanoTime();
+    long delta = now - m.getTimestamp();
+
+    public Consumer(IProdConsBuffer buffer, int consTime) {
+        this.buffer = buffer;
+        this.consTime = consTime;
+    }
+    
+    long now = System.nanoTime();
+    long delta = now - m.getTimestamp();
+
+    System.out.println("Consumer " + getId() + 
+        " consumed " + m + 
+        " after " + (delta / 1_000_000.0) + " ms");
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                Message m = buffer.get();
+                totmsgC++;        
+                // TEST : les messages consommés
+                System.out.println("Consumer " + getId() + " consumed message " + m);
+                              
+                sleep(consTime);
+            
+            }
+        } catch (InterruptedException e) {
+        	 //e.printStackTrace();
+        }
+    }
+    
+    public static int getTotmsgC() {
+    	return totmsgC ;
+    }
+}

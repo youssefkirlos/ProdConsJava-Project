@@ -1,0 +1,52 @@
+package prodcons.v6;
+
+import java.util.Random;
+
+public class Producer extends Thread {
+	
+	private final IProdConsBuffer buffer;
+    private final int minProd, maxProd;
+    private final int prodTime;
+
+    public Producer(IProdConsBuffer buffer, int minProd, int maxProd, int prodTime) {
+        this.buffer = buffer;
+        this.minProd = minProd;
+        this.maxProd = maxProd;
+        this.prodTime = prodTime;
+    }
+    
+    @Override
+    public void run() {
+        try {
+            Random r = new Random();
+            int count = r.nextInt(maxProd - minProd + 1) + minProd;
+            system.out.println(count);
+            for (int i = 0; i < count; i++) {
+
+                sleep(prodTime);
+
+                Message m = new Message(getId(), "Hello", i);
+
+                // TEST : Objectif 6
+                //int n = 1 + r.nextInt(5);
+                int n = 3 ;
+
+                System.out.println("Producer " + getId() +
+                        " puts message " + i + " with " + n + " copies");
+
+                buffer.put(m, n);
+
+                System.out.println("Producer " + getId() +
+                        " is now unlocked , message " + i + " is fully consumed.");
+            }
+
+        } catch (InterruptedException e) {
+        }
+    }
+    
+    
+    
+
+	
+
+}

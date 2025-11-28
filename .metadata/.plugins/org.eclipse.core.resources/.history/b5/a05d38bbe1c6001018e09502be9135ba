@@ -1,0 +1,75 @@
+package prodcons.v3;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+
+public class ProdConsBuffer implements IProdConsBuffer{
+	
+	private final Message[] buffer;
+    private final int bufSz;
+    private int arrivalCounter = 0;
+
+    private int in = 0;
+    private int out = 0;
+    private int totmsg = 0;
+    private int nfull = 0;
+    
+    private final ReentrantLock lock;
+    private final Condition notFull;
+    private final Condition notEmpty;
+    
+    
+    public ProdConsBuffer(int bufSz) {
+        this.bufSz = bufSz;
+        this.buffer = new Message[bufSz];
+        
+        // Objectif 4 
+        this.lock = new ReentrantLock(true);   //FIFO
+        this.notFull = lock.newCondition();
+        this.notEmpty = lock.newCondition();
+        
+    }
+
+	@Override
+	public void put(Message m) throws InterruptedException {
+		lock.lock();
+	    try {
+	        while (nfull == bufSz) {
+	            notFull.await(); 
+	            System.out.println("TEST : Producer " + m.getProducerId() + " IS WAITING (buffer full)");
+	        }
+
+	        m.setArrivalOrder(arrivalCounter++);
+	        
+	        buffer[in] = m;
+	        in = (in + 1) % bufSz;
+	        nfull++;
+	        totmsg++;
+	        
+	        notEmpty.signal();
+	    } finally {
+	        lock.unlock();
+	    }
+		
+	}
+
+	@Override
+	public Message get() throws InterruptedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int nmsg() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int totmsg() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

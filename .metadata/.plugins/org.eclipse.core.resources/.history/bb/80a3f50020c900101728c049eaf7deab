@@ -1,0 +1,57 @@
+package prodcons.v6;
+
+public class Message {
+    private final long producerId;
+    private final String msg ;
+    private final int msg_id;
+
+    
+    private int arrivalOrder = -1;
+    
+    // Objectif 6
+    public int n = 1;          
+    public int remaining = 1; 
+    
+    public Message(long producerId, String msg, int msg_id) {
+        this.producerId = producerId;
+		this.msg = msg;
+        this.msg_id = msg_id;
+    }
+
+    public long getProducerId() {
+        return producerId;
+    }
+
+    public int getId() {
+        return msg_id;
+    }
+
+    public void setArrivalOrder(int n) {
+        this.arrivalOrder = n;
+    }
+
+    public int getArrivalOrder() {
+        return arrivalOrder;
+    }
+    
+    public void setN(int n) {
+    	this.n = n ;
+    }
+    
+    public void setRemaining(int r) {
+    	this.remaining = r ;	
+    }
+    
+    public int getN() {
+    	return n;
+    }
+    
+    public int getRemaining() {
+    	return remaining;	
+    }
+
+
+    public String toString() {
+        return "Msg{prod=" + producerId + ", id=" + msg_id + ", order=" + arrivalOrder + "}";
+    }
+}

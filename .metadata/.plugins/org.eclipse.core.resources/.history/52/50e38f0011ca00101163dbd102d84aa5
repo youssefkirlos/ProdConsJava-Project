@@ -1,0 +1,23 @@
+package prodcons.v7;
+
+public class TaskExecutor {
+	private final ProdConsBuffer buffer;
+	private final int bufSz;
+
+    public TaskExecutor(int bufSz) {
+    	this.bufSz = bufSz;
+        this.buffer = new ProdConsBuffer(bufSz);
+    }
+    
+    public void executeTAsk(Runnable task) throws InterruptedException {
+
+        Task tsk = new Task(Thread.currentThread().getId(),0,task);
+
+        buffer.put(tsk);
+
+        // *** un Consumer dédié pour cette tâche ***
+        TaskConsumer cons = new TaskConsumer(buffer);
+        cons.start();
+    }
+
+}

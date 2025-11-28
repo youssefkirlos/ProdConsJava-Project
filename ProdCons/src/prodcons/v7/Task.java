@@ -1,0 +1,33 @@
+package prodcons.v7;
+
+public class Task implements Runnable{
+	
+	private final long producerId;
+    private final int taskId;
+    private final Runnable task;
+
+    public Task(long producerId, int taskId, Runnable task) {
+        this.producerId = producerId;
+        this.taskId = taskId;
+        this.task = task;
+    }
+    
+    
+    public long getProducerId() {
+        return producerId;
+    }
+
+    public int getId() {
+        return taskId;
+    }
+    
+    public String toString() {
+        return "Task{prod=" + producerId + ", id=" + taskId + "}";
+    }
+
+    @Override
+    public void run() {
+        task.run();
+    }
+
+}

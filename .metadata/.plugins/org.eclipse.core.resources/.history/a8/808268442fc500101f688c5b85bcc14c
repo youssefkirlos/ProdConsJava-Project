@@ -1,0 +1,39 @@
+package prodcons.v2;
+
+import java.util.Random;
+
+public class Producer extends Thread {
+	
+	private final IProdConsBuffer buffer;
+    private final int minProd, maxProd;
+    private final int prodTime;
+    private int arrivalCounter = 0;
+
+    public Producer(IProdConsBuffer buffer, int minProd, int maxProd, int prodTime) {
+        this.buffer = buffer;
+        this.minProd = minProd;
+        this.maxProd = maxProd;
+        this.prodTime = prodTime;
+    }
+    
+    @Override
+    public void run() {
+        try {
+        	Random r = new Random();
+            int count = r.nextInt(maxProd - minProd + 1) + minProd;
+
+            for (int i = 0; i < count; i++) {
+                sleep(prodTime);
+                Message m = new Message(getId(),"Hello",i);
+                buffer.put(m);
+                // TEST : les messages produits
+                System.out.println("Producer " + getId() + " produced message " + i); 
+            }
+
+        } catch (InterruptedException e) {
+            //e.printStackTrace();
+        }
+    }
+    
+
+}

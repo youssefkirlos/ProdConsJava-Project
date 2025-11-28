@@ -1,0 +1,21 @@
+package prodcons.v7;
+
+public class Message implements Runnable{
+	
+	private final long producerId;
+    private final int taskId;
+    private final Runnable task;
+
+    public Message(long producerId, int taskId, Runnable task) {
+        this.producerId = producerId;
+        this.taskId = taskId;
+        this.task = task;
+    }
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

@@ -1,0 +1,12 @@
+package prodcons.v7;
+
+public class Producer {
+	private final IProdConsBuffer buffer;
+    private final int taskCount;
+
+    public Producer(IProdConsBuffer buffer, int taskCount) {
+        this.buffer = buffer;
+        this.taskCount = taskCount;
+    }
+
+}

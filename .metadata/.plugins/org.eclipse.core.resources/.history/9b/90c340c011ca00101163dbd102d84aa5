@@ -1,0 +1,18 @@
+package prodcons.v7;
+
+public class TestTaskExecutor {
+
+	public class TestTaskExecutor {
+
+	    public static void main(String[] args) throws Exception {
+
+	        TaskExecutor exec = new TaskExecutor(5);
+
+	        new TaskProducer(exec, 10).start();
+	        new TaskProducer(exec, 10).start();
+
+	        Thread.sleep(2000);
+
+	        System.out.println("FIN TEST politique 1");
+	    }
+	}

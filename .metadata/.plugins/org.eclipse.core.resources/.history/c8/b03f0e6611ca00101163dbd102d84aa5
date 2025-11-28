@@ -1,0 +1,33 @@
+package prodcons.v7;
+
+import java.util.Random;
+
+public class Producer extends Thread {
+	
+	private final TaskExecutor executor;
+    private final int taskCount;
+
+    public Producer(TaskExecutor executor, int taskCount) {
+    	this.executor = executor;
+        this.taskCount = taskCount;
+    }
+    
+    @Override
+    public void run() {
+        Random r = new Random();
+
+        for (int i = 0; i < taskCount; i++) {
+            int id = i;
+
+            try {
+                executor.executeTask(() -> {
+                    System.out.println("Executing task " + id + " by producer " + getId());
+                });
+
+                Thread.sleep(20 + r.nextInt(30));
+
+            } catch (InterruptedException e) {}
+        }
+    }
+
+}

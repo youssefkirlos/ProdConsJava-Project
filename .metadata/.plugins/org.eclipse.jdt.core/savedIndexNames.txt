@@ -1,0 +1,4 @@
+INDEX VERSION 1.134+/home/youssef/Documents/Polytech_4A/INFO4/S7/PC/Projet /.metadata/.plugins/org.eclipse.jdt.core
+4174912123.index
+2771831480.index
+1865797976.index

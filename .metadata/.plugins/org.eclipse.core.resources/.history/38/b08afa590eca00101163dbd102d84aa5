@@ -1,0 +1,10 @@
+package prodcons.v7;
+
+public class TaskExecutor {
+	private final ProdConsBuffer buffer;
+
+    public TaskExecutor(int bufSz) {
+        this.buffer = new ProdConsBuffer(bufSz);
+    }
+
+}
