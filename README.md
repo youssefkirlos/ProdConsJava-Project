@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 # ProdConsJava-Project
 =======
->>>>>>> 73647d9 (Clean up IDE files and add .gitignore)
 # Projet PC : Java Producteurs/Consommateurs 
 ###### KIRLOS Youssef 
 
@@ -60,8 +56,3 @@ Méthode la plus fiable pour vérifier strictement que l’ordre **FIFO** est re
 ### 4 – Variation des paramètres
 Nous avons modifié `nProd`, `nCons`, `k` (objectif 5) et `n` (objectif 6) afin de générer plusieurs simulations et observer le comportement dans des configurations différentes.
 
-
-<<<<<<< HEAD
-=======
->>>>>>> cafe3f3 (Initial commit)
->>>>>>> 73647d9 (Clean up IDE files and add .gitignore)
