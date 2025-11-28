@@ -12,6 +12,7 @@
 .classpath
 .project
 .settings/
+.metadata
 
 # === System files ===
 .DS_Store
