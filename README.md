@@ -1,5 +1,3 @@
-# ProdConsJava-Project
-=======
 # Projet PC : Java Producteurs/Consommateurs 
 ###### KIRLOS Youssef 
 
